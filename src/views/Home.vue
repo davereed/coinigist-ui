@@ -2,7 +2,17 @@
   <div class="home pt-5">
     <main role="main" class="container-fluid">
       <div>
-        <div class="row">
+        <div class="row justify-content-md-center" v-if="!my_channel.length">
+          <div class="col-6">
+            <section class="jumbotron bg-dark text-white text-center py-4">
+              <div class="container">
+                <h3 class="jumbotron-heading">Waiting for price updates and alerts</h3>
+                <p class="lead">Crypto price updates and alerts show up automatically, please be patient.</p>
+              </div>
+            </section>
+          </div>
+        </div>
+        <div class="row" v-if="my_channel.length">
           <div class="col">
             <h4>Market Updates <small class="text-muted float-right"><input type="checkbox" id="checkbox" v-model="updateSounds"> play sounds</small></h4>
             <table class="table table-sm">
