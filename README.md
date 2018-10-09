@@ -1,4 +1,6 @@
-# crypto-price-monitor-ui
+# Crypto Price Monitor
+
+Updated UI for https://cryptoprices.netlify.com/
 
 ## Project setup
 ```
