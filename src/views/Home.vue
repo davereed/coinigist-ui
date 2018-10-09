@@ -69,7 +69,7 @@ export default {
       const formattedDate = moment(messageObject[0]).format('MMMM Do YYYY, h:mm:ss a');
       if (messageObject[2] === 'ALERT') {
         if (this.alertSounds) {
-          const audio = new Audio('http://soundbible.com/mp3/sms-alert-1-daniel_simon.mp3');
+          const audio = new Audio('https://soundbible.com/mp3/sms-alert-1-daniel_simon.mp3');
           audio.volume = 0.2;
           audio.play();
         }
@@ -80,7 +80,7 @@ export default {
         };
       } else {
         if (this.updateSounds) {
-          const audio = new Audio('http://soundbible.com/mp3/Tick-DeepFrozenApps-397275646.mp3');
+          const audio = new Audio('https://soundbible.com/mp3/Tick-DeepFrozenApps-397275646.mp3');
           audio.volume = 0.2;
           audio.play();
         }
