@@ -2,7 +2,7 @@
   <div class="home pt-5">
     <main role="main" class="container-fluid">
       <div>
-        <div class="row justify-content-md-center" v-if="!my_channel.length">
+        <div class="row justify-content-md-center" v-if="!alerts.length && !updates.length">
           <div class="col-6">
             <section class="jumbotron bg-dark text-white text-center py-4">
               <div class="container">
@@ -12,7 +12,7 @@
             </section>
           </div>
         </div>
-        <div class="row" v-if="my_channel.length">
+        <div class="row" v-if="alerts.length || updates.length">
           <div class="col">
             <h4>Market Updates <small class="text-muted float-right"><input type="checkbox" id="checkbox" v-model="updateSounds"> play sounds</small></h4>
             <table class="table table-sm">
@@ -27,13 +27,13 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="msg in my_channel.slice().reverse()" v-bind:key="msg.i" v-if="msg.update">
-                  <td>{{ msg.update.date }}</td>
-                  <td><a target="_blank" :href="msg.update.binanceUrl">{{ msg.update.coin }}</a></td>
-                  <td>{{ msg.update.percentage }}</td>
-                  <td class="text-capitalize">{{ msg.update.party }}</td>
-                  <td class="text-capitalize">{{ msg.update.market }}</td>
-                  <td><a target="_blank" :href="msg.update.tradingViewUrl"><img src="../assets/tradingview-logo.png" /></a></td>
+                <tr v-for="update in updates" :key="update.id">
+                  <td>{{ update.date }}</td>
+                  <td><a target="_blank" :href="update.binanceUrl">{{ update.coin }}/{{ update.pairing }}</a></td>
+                  <td>{{ update.percentage }}</td>
+                  <td class="text-capitalize">{{ update.sellers }}</td>
+                  <td class="text-capitalize">{{ update.market }}</td>
+                  <td><a target="_blank" :href="update.tradingViewUrl"><img src="../assets/tradingview-logo.png" /></a></td>
                 </tr>
               </tbody>
             </table>
@@ -50,11 +50,11 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="msg in my_channel.slice().reverse()" v-bind:key="msg.i" v-if="msg.alert">
-                  <td>{{ msg.alert.date }}</td>
-                  <td><a target="_blank" :href="msg.alert.binanceUrl">{{ msg.alert.coin }}</a></td>
-                  <td>{{ msg.alert.price }}</td>
-                  <td><a target="_blank" :href="msg.alert.tradingViewUrl"><img src="../assets/tradingview-logo.png" /></a></td>
+                <tr v-for="alert in alerts" :key="alert.id">
+                  <td>{{ alert.date }}</td>
+                  <td><a target="_blank" :href="alert.binanceUrl">{{ alert.coin }}/{{ alert.pairing }}</a></td>
+                  <td>{{ alert.price }}</td>
+                  <td><a target="_blank" :href="alert.tradingViewUrl"><img src="../assets/tradingview-logo.png" /></a></td>
                 </tr>
               </tbody>
             </table>
@@ -74,51 +74,67 @@ export default {
     return {
       updateSounds: false,
       alertSounds: true,
+      alerts: [],
+      updates: [],
       my_channel: this.$pnGetMessage('my_channel', this.receptor),
     };
   },
   methods: {
     receptor(msg) {
-      const messageObject = msg.message.split(' ');
-      const formattedDate = moment(messageObject[0]).format('MMMM Do YYYY, h:mm:ss a');
+      // Convert 17 digit timestamp to milliseconds
+      const formattedDate = moment(msg.timetoken / 10000).format('MMMM Do YYYY, h:mm:ss a');
+      const messageObject = msg.message;
+
+      // Set coin info
       const coinRegex = /([a-zA-Z]{3,5})(btc|usdt|etc|bnb)/gmi;
-      const coinParts = messageObject[3] ? coinRegex.exec(messageObject[3]) : {};
-      const coin = coinParts[1] ? coinParts[1] : '';
-      const pairing = coinParts[2] ? coinParts[2] : '';
+      const exchangeSymbol = messageObject.symbol;
+      const exchangeSymbolParts = coinRegex.exec(exchangeSymbol);
+      const coin = exchangeSymbolParts[1];
+      const pairing = exchangeSymbolParts[2];
+
+      // Set variables
+      const price = messageObject.latest_candle.price_close;
+      const sellers = messageObject.sell_pressure;
+      const market = messageObject.alt_mood;
+      const percentage = messageObject.pct_str;
+
+      // Create urls
       const binanceUrl = `https://www.binance.com/en/trade/${coin}_${pairing}`;
       const tradingViewUrl = `https://www.tradingview.com/symbols/${coin}${pairing}`;
-      if (messageObject[2] === 'ALERT') {
+      if (messageObject.msg_type === 'ALERT') {
         if (this.alertSounds) {
           const audio = new Audio('https://soundbible.com/mp3/sms-alert-1-daniel_simon.mp3');
           audio.volume = 0.2;
           audio.play();
         }
-        msg.alert = {
+        this.alerts.unshift({
+          id: this.alerts.count,
           date: formattedDate,
-          coin: coin + '/' + pairing,
-          price: messageObject[5],
+          exchangeSymbol,
+          coin,
+          pairing,
+          price,
           binanceUrl,
           tradingViewUrl,
-        };
-      } else {
+        });
+      } else if (messageObject.msg_type === 'UPDATE') {
         if (this.updateSounds) {
           const audio = new Audio('https://soundbible.com/mp3/Tick-DeepFrozenApps-397275646.mp3');
           audio.volume = 0.2;
           audio.play();
         }
-        const partyRegEx = /(sellers|buyers)(\:)([a-zA-Z0-9]+)(\,)/gm;
-        const partyParts = partyRegEx.exec(messageObject[9]);
-        const marketRegEx = /(mkt)(\:)([a-zA-Z0-9]+)(\))/gm;
-        const marketParts = marketRegEx.exec(messageObject[10]);
-        msg.update = {
+        this.updates.unshift({
+          id: this.updates.count,
           date: formattedDate,
-          coin: coin + '/' + pairing,
-          percentage: messageObject[6],
-          party: partyParts[3] ? partyParts[3] : '',
-          market: marketParts[3] ? marketParts[3] : '',
+          exchangeSymbol,
+          coin,
+          pairing,
+          percentage,
+          sellers,
+          market,
           binanceUrl,
           tradingViewUrl,
-        };
+        });
       }
     },
   },

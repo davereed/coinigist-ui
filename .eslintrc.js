@@ -14,6 +14,9 @@ module.exports = {
     'prefer-template': 'off',
     'no-useless-escape': 'off',
     'max-len': 'off',
+    'new-cap': 'off',
+    'no-undef': 'off',
+    'no-new': 'off',
   },
   parserOptions: {
     parser: 'babel-eslint',
