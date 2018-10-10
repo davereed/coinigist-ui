@@ -14,7 +14,7 @@
         </div>
         <div class="row" v-if="alerts.length || updates.length">
           <div class="col">
-            <h4>Market Updates <small class="text-muted float-right"><input type="checkbox" id="checkbox" v-model="updateSounds"> play sounds</small></h4>
+            <h4>Market Updates <small class="text-muted float-right"><b-button :pressed.sync="updateSounds" variant="outline-primary" size="sm"><span v-show="updateSounds"><i class="fas fa-fw fa-volume"></i></span><span v-show="!updateSounds"><i class="fas fa-fw fa-volume-off"></i></span></b-button></small></h4>
             <table class="table table-sm">
               <thead>
                 <tr>
@@ -39,7 +39,7 @@
             </table>
           </div>
           <div class="col">
-            <h4>Alerts <small class="text-muted float-right"><input type="checkbox" id="checkbox" v-model="alertSounds"> play sounds</small></h4>
+            <h4>Alerts <small class="text-muted float-right"><b-button :pressed.sync="alertSounds" variant="outline-primary" size="sm"><span v-show="alertSounds"><i class="fas fa-fw fa-volume"></i></span><span v-show="!alertSounds"><i class="fas fa-fw fa-volume-off"></i></span></b-button></small></h4>
             <table class="table table-sm">
               <thead>
                 <tr>
