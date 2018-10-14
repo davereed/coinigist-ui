@@ -6,6 +6,16 @@
           <div class="col-8">
             <h3>Market Alerts <small class="text-muted float-right"><b-button :pressed.sync="alertSounds" variant="outline-primary" size="sm"><span v-show="alertSounds"><i class="fas fa-fw fa-volume"></i></span><span v-show="!alertSounds"><i class="fas fa-fw fa-volume-off"></i></span></b-button></small></h3>
             <Alert v-for="alert in alerts" v-bind:key=alert.id :alert=alert />
+            <div class="row justify-content-md-center mt-4" v-if="!alerts.length">
+              <div class="col-12">
+                <section class="jumbotron bg-dark text-white text-center py-4">
+                  <div class="container">
+                    <h3 class="jumbotron-heading">Waiting for price updates and alerts</h3>
+                    <p class="lead">Crypto price updates and alerts show up automatically, please be patient.</p>
+                  </div>
+                </section>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -31,7 +41,7 @@ export default {
   methods: {
     receptor(msg) {
       try {
-        // Convert 17 digit timestamp to milliseconds
+        // Get date and message
         const formattedDate = moment().format('MMMM Do YYYY, h:mm:ss a');
         const messageObject = msg.message;
 
