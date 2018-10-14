@@ -10,8 +10,8 @@
               <div class="col-12">
                 <section class="jumbotron bg-dark text-white text-center py-4">
                   <div class="container">
-                    <h3 class="jumbotron-heading">Waiting for price updates and alerts</h3>
-                    <p class="lead">Crypto price updates and alerts show up automatically, please be patient.</p>
+                    <h3 class="jumbotron-heading">Waiting for alerts</h3>
+                    <p class="lead">Crypto price alerts show up automatically, please be patient.</p>
                   </div>
                 </section>
               </div>
