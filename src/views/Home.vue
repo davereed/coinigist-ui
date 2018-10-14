@@ -2,62 +2,10 @@
   <div class="home pt-5">
     <main role="main" class="container-fluid">
       <div>
-        <div class="row justify-content-md-center" v-if="!alerts.length && !updates.length">
-          <div class="col-6">
-            <section class="jumbotron bg-dark text-white text-center py-4">
-              <div class="container">
-                <h3 class="jumbotron-heading">Waiting for price updates and alerts</h3>
-                <p class="lead">Crypto price updates and alerts show up automatically, please be patient.</p>
-              </div>
-            </section>
-          </div>
-        </div>
-        <div class="row" v-if="alerts.length || updates.length">
-          <div class="col">
-            <h4>Market Updates <small class="text-muted float-right"><b-button :pressed.sync="updateSounds" variant="outline-primary" size="sm"><span v-show="updateSounds"><i class="fas fa-fw fa-volume"></i></span><span v-show="!updateSounds"><i class="fas fa-fw fa-volume-off"></i></span></b-button></small></h4>
-            <table class="table table-sm">
-              <thead>
-                <tr>
-                  <th scope="col">Date</th>
-                  <th scope="col">Coin Pairing</th>
-                  <th scope="col">Percentage</th>
-                  <th scope="col">Sellers</th>
-                  <th scope="col">Market</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="update in updates" :key="update.id">
-                  <td>{{ update.date }}</td>
-                  <td><a target="_blank" :href="update.binanceUrl">{{ update.coin }}/{{ update.pairing }}</a></td>
-                  <td>{{ update.percentage }}</td>
-                  <td class="text-capitalize">{{ update.sellers }}</td>
-                  <td class="text-capitalize">{{ update.market }}</td>
-                  <td><a target="_blank" :href="update.tradingViewUrl"><img src="../assets/tradingview-logo.png" /></a></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="col">
-            <h4>Alerts <small class="text-muted float-right"><b-button :pressed.sync="alertSounds" variant="outline-primary" size="sm"><span v-show="alertSounds"><i class="fas fa-fw fa-volume"></i></span><span v-show="!alertSounds"><i class="fas fa-fw fa-volume-off"></i></span></b-button></small></h4>
-            <table class="table table-sm">
-              <thead>
-                <tr>
-                  <th scope="col">Date</th>
-                  <th scope="col">Coin Pairing</th>
-                  <th scope="col">Price</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="alert in alerts" :key="alert.id">
-                  <td>{{ alert.date }}</td>
-                  <td><a target="_blank" :href="alert.binanceUrl">{{ alert.coin }}/{{ alert.pairing }}</a></td>
-                  <td>{{ alert.price }}</td>
-                  <td><a target="_blank" :href="alert.tradingViewUrl"><img src="../assets/tradingview-logo.png" /></a></td>
-                </tr>
-              </tbody>
-            </table>
+        <div class="row justify-content-center">
+          <div class="col-8">
+            <h3>Market Alerts <small class="text-muted float-right"><b-button :pressed.sync="alertSounds" variant="outline-primary" size="sm"><span v-show="alertSounds"><i class="fas fa-fw fa-volume"></i></span><span v-show="!alertSounds"><i class="fas fa-fw fa-volume-off"></i></span></b-button></small></h3>
+            <Alert v-for="alert in alerts" v-bind:key=alert.id :alert=alert />
           </div>
         </div>
       </div>
@@ -66,6 +14,7 @@
 </template>
 
 <script>
+import Alert from '@/components/Alert.vue';
 import moment from 'moment';
 
 export default {
@@ -81,65 +30,83 @@ export default {
   },
   methods: {
     receptor(msg) {
-      // Convert 17 digit timestamp to milliseconds
-      const formattedDate = moment(msg.timetoken / 10000).format('MMMM Do YYYY, h:mm:ss a');
-      const messageObject = msg.message;
+      try {
+        // Convert 17 digit timestamp to milliseconds
+        const formattedDate = moment().format('MMMM Do YYYY, h:mm:ss a');
+        const messageObject = msg.message;
 
-      // Set coin info
-      const coinRegex = /([a-zA-Z]{3,5})(btc|usdt|etc|bnb)/gmi;
-      const exchangeSymbol = messageObject.symbol;
-      const exchangeSymbolParts = coinRegex.exec(exchangeSymbol);
-      const coin = exchangeSymbolParts[1];
-      const pairing = exchangeSymbolParts[2];
+        // Set coin info
+        const coinRegex = /([a-zA-Z]{2,5})(btc|usdt|etc|bnb)/gmi;
+        const exchangeSymbol = messageObject.symbol;
+        const exchangeSymbolParts = coinRegex.exec(exchangeSymbol);
+        const coin = exchangeSymbolParts[1];
+        const pairing = exchangeSymbolParts[2];
+        const tradingViewChart = `BINANCE:${coin}${pairing}`;
 
-      // Set variables
-      const price = messageObject.latest_candle.price_close;
-      const sellers = messageObject.sell_pressure;
-      const market = messageObject.alt_mood;
-      const percentage = messageObject.pct_str;
+        // Set variables
+        const price = messageObject.latest_candle.price_close;
+        const sellers = messageObject.sell_pressure === 'med' ? 'medium' : messageObject.sell_pressure;
+        const market = messageObject.alt_mood;
+        const percentage = messageObject.pct_str;
+        const support = messageObject.support_to_resist;
 
-      // Create urls
-      const binanceUrl = `https://www.binance.com/en/trade/${coin}_${pairing}`;
-      const tradingViewUrl = `https://www.tradingview.com/symbols/${coin}${pairing}`;
-      if (messageObject.msg_type === 'ALERT') {
-        if (this.alertSounds) {
-          const audio = new Audio('https://soundbible.com/mp3/sms-alert-1-daniel_simon.mp3');
-          audio.volume = 0.2;
-          audio.play();
+        // Create urls
+        const binanceUrl = `https://www.binance.com/en/trade/${coin}_${pairing}`;
+        const tradingViewUrl = `https://www.tradingview.com/symbols/${coin}${pairing}`;
+        if (messageObject.msg_type === 'ALERT') {
+          if (this.alertSounds) {
+            const audio = new Audio('https://soundbible.com/mp3/sms-alert-1-daniel_simon.mp3');
+            audio.volume = 0.2;
+            audio.play();
+          }
+          this.alerts.unshift({
+            id: this.alerts.length,
+            date: formattedDate,
+            exchangeSymbol,
+            coin,
+            pairing,
+            price,
+            market,
+            sellers,
+            support,
+            binanceUrl,
+            tradingViewUrl,
+            tradingViewChart,
+          });
+        } else if (messageObject.msg_type === 'UPDATE') {
+          if (this.updateSounds) {
+            const audio = new Audio('https://soundbible.com/mp3/Tick-DeepFrozenApps-397275646.mp3');
+            audio.volume = 0.2;
+            audio.play();
+          }
+          this.updates.unshift({
+            id: this.updates.count,
+            date: formattedDate,
+            exchangeSymbol,
+            coin,
+            pairing,
+            percentage,
+            sellers,
+            market,
+            binanceUrl,
+            tradingViewUrl,
+          });
         }
-        this.alerts.unshift({
-          id: this.alerts.count,
-          date: formattedDate,
-          exchangeSymbol,
-          coin,
-          pairing,
-          price,
-          binanceUrl,
-          tradingViewUrl,
-        });
-      } else if (messageObject.msg_type === 'UPDATE') {
-        if (this.updateSounds) {
-          const audio = new Audio('https://soundbible.com/mp3/Tick-DeepFrozenApps-397275646.mp3');
-          audio.volume = 0.2;
-          audio.play();
-        }
-        this.updates.unshift({
-          id: this.updates.count,
-          date: formattedDate,
-          exchangeSymbol,
-          coin,
-          pairing,
-          percentage,
-          sellers,
-          market,
-          binanceUrl,
-          tradingViewUrl,
-        });
+      } catch (err) {
+        console.log(err);
+        console.log(msg);
       }
     },
   },
   mounted() {
     this.$pnSubscribe({ channels: ['my_channel'], withPresence: true });
   },
+  components: {
+    Alert,
+  },
 };
 </script>
+
+<style scoped lang="scss">
+
+</style>

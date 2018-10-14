@@ -16,7 +16,7 @@ module.exports = {
     'max-len': 'off',
     'new-cap': 'off',
     'no-undef': 'off',
-    'no-new': 'off',
+    'no-new': 'off'
   },
   parserOptions: {
     parser: 'babel-eslint',
