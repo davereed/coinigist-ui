@@ -44,12 +44,14 @@
 </template>
 
 <script>
+import momentTimezone from 'moment-timezone';
 import { format } from 'date-fns';
 
 export default {
   name: 'Alert',
   props: {
     alert: Object,
+    interval: String,
   },
   data() {
     return {
@@ -84,11 +86,12 @@ export default {
   },
   mounted() {
     setTimeout(() => {
+      const timeZone = momentTimezone.tz.guess();
       new TradingView.widget({
         autosize: true,
         symbol: this.currentAlert.tradingViewChart,
-        interval: '5',
-        timezone: 'Etc/UTC',
+        interval: this.interval,
+        timezone: !timeZone ? 'Etc/UTC' : timeZone,
         theme: 'Dark',
         style: '1',
         locale: 'en',

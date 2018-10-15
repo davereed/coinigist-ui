@@ -4,8 +4,21 @@
       <div>
         <div class="row justify-content-center">
           <div class="col-8">
-            <h3>Market Alerts <small class="text-muted float-right"><b-button :pressed.sync="alertSounds" variant="outline-primary" size="sm"><span v-show="alertSounds"><i class="fas fa-fw fa-volume"></i></span><span v-show="!alertSounds"><i class="fas fa-fw fa-volume-off"></i></span></b-button></small></h3>
-            <Alert v-for="alert in alerts" v-bind:key=alert.id :alert=alert />
+            <h3>
+              Market Alerts
+              <small class="text-muted float-right">
+              <b-form-group class="d-inline mr-3 mb-0 pb-0" >
+                <b-form-radio-group id="candleInterval"
+                                    buttons
+                                    v-model="candleInterval"
+                                    :options="candleIntervalOptions"
+                                    size="sm"
+                                    name="candleInterval" />
+              </b-form-group>
+              <b-button :pressed.sync="alertSounds" variant="outline-primary" size="sm"><span v-show="alertSounds"><i class="fas fa-fw fa-volume"></i></span><span v-show="!alertSounds"><i class="fas fa-fw fa-volume-off"></i></span></b-button>
+              </small>
+            </h3>
+            <Alert v-for="alert in alerts" v-bind:key=alert.id :alert=alert :interval=candleInterval />
             <div class="row justify-content-md-center mt-4" v-if="!alerts.length">
               <div class="col-12">
                 <section class="jumbotron bg-dark text-white text-center py-4">
@@ -31,6 +44,13 @@ export default {
   name: 'home',
   data() {
     return {
+      candleInterval: '5',
+      candleIntervalOptions: [
+        { text: '1 minute', value: '1' },
+        { text: '3 minute', value: '3' },
+        { text: '5 minute', value: '5' },
+        { text: '15 minute', value: '15' },
+      ],
       updateSounds: false,
       alertSounds: true,
       alerts: [],
@@ -120,3 +140,4 @@ export default {
 <style scoped lang="scss">
 
 </style>
+
