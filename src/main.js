@@ -2,6 +2,7 @@ import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue';
 import PubNubVue from 'pubnub-vue';
 import VueTimeago from 'vue-timeago';
+import VuePersist from 'vue-persist';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
@@ -18,6 +19,8 @@ Vue.use(VueTimeago, {
   name: 'Timeago', // Component name, `Timeago` by default
   locale: 'en', // Default locale
 });
+
+Vue.use(VuePersist);
 
 new Vue({
   router,

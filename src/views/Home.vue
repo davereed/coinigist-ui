@@ -58,6 +58,7 @@ export default {
       my_channel: this.$pnGetMessage('my_channel', this.receptor),
     };
   },
+  persist: ['updateSounds', 'alertSounds', 'candleInterval'],
   methods: {
     receptor(msg) {
       try {
