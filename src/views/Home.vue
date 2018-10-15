@@ -79,6 +79,7 @@ export default {
         const market = messageObject.alt_mood;
         const percentage = messageObject.pct_str;
         const support = messageObject.support_to_resist;
+        const baseScore = messageObject.score;
 
         // Create urls
         const binanceUrl = `https://www.binance.com/en/trade/${coin}_${pairing}`;
@@ -99,6 +100,7 @@ export default {
             market,
             sellers,
             support,
+            baseScore,
             binanceUrl,
             tradingViewUrl,
             tradingViewChart,

@@ -12,9 +12,19 @@
           </div>
         </div>
         <div class="chart-sidebar bg-alert-sidebar">
-          <h4 class="chart-title">
-            <a href="#">Alert details</a>
+          <h4 class="chart-title mb-0 pb-0">
+            Overall Score
+          </h4>
+          <h4 class="chart-title text-capitalize mt-0 pt-0">
+            <small>
+            <b-progress :value="currentAlert.baseScore"
+                        :max="10"
+                        :variant="scoreProgressVariant"
+                        :key="scoreProgressVariant"
+                        show-value
+            ></b-progress>
             <small><timeago :datetime="createDate" :auto-update="5" :converterOptions="{ includeSeconds: true }"></timeago></small>
+            </small>
           </h4>
           <h4 class="chart-title mt-4">
             <i class="fab fa-btc text-bitcoin"></i> {{ currentAlert.price }}
@@ -32,7 +42,6 @@
             <i v-bind:class="sellersClassObject"></i> {{ currentAlert.sellers }}
             <small>Sellers</small>
           </h4>
-          <hr class="chart-info-divider" />
           <div class="chart-sidebar-buttons p-3">
             <a target="_blank" :href="alert.binanceUrl" class="btn btn-primary btn-sm btn-block">Binance</a>
             <a target="_blank" :href="alert.tradingViewUrl" class="btn btn-secondary btn-sm btn-block">TradingView</a>
@@ -60,6 +69,22 @@ export default {
     };
   },
   computed: {
+    scoreProgressVariant() {
+      const scoreSwitch = score => ({
+        0: 'danger',
+        1: 'danger',
+        2: 'danger',
+        3: 'warning',
+        4: 'warning',
+        5: 'info',
+        6: 'primary',
+        7: 'primary',
+        8: 'success',
+        9: 'success',
+        10: 'success',
+      })[score];
+      return scoreSwitch(this.currentAlert.baseScore);
+    },
     marketClassObject() {
       return {
         'far fa-frown text-danger very': this.currentAlert && this.currentAlert.market === 'very negative',
@@ -78,9 +103,9 @@ export default {
     },
     sellersClassObject() {
       return {
-        'far fa-chart-line-down text-danger': this.currentAlert && this.currentAlert.sellers === 'low',
-        'far fa-chart-area text-secondary': this.currentAlert && this.currentAlert.sellers === 'medium',
-        'far fa-chart-line text-success': this.currentAlert && this.currentAlert.sellers === 'high',
+        'far fa-badge-check text-success': this.currentAlert && this.currentAlert.sellers === 'low',
+        'far fa-badge text-info': this.currentAlert && this.currentAlert.sellers === 'medium',
+        'far fa-badge text-danger': this.currentAlert && this.currentAlert.sellers === 'high',
       };
     },
   },
