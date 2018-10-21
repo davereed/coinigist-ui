@@ -85,7 +85,7 @@ export default {
         // Create urls
         const binanceUrl = `https://www.binance.com/en/trade/${coin}_${pairing}`;
         const tradingViewUrl = `https://www.tradingview.com/symbols/${coin}${pairing}`;
-        if (messageObject.msg_type === 'ALERT') {
+        if (messageObject.msg_type === 'ALERT' && messageObject.is_show === true) {
           if (this.alertSounds) {
             const audio = new Audio('https://soundbible.com/mp3/sms-alert-1-daniel_simon.mp3');
             audio.volume = 0.2;
