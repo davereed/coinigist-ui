@@ -105,6 +105,7 @@ export default {
             binanceUrl,
             tradingViewUrl,
             tradingViewChart,
+            originalMessage: messageObject,
           });
         } else if (messageObject.msg_type === 'UPDATE') {
           if (this.updateSounds) {

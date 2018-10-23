@@ -1,5 +1,8 @@
 <template>
   <div class="alert-component mb-5">
+    <b-modal v-bind:id="'modal-' + currentAlert.id" title="Alert Data">
+      <vue-json-pretty :data="currentAlert"></vue-json-pretty>
+    </b-modal>
     <div class="card bg-chart-body">
       <div class="card-body m-0 p-0">
         <div class="chart-content bg-black">
@@ -13,7 +16,7 @@
         </div>
         <div class="chart-sidebar bg-alert-sidebar">
           <h4 class="chart-title mb-0 pb-0">
-            Overall Score
+            Overall Score <a target="_blank" v-b-modal="'modal-'+currentAlert.id" class="btn btn-default btn-sm btn-block d-inline"><i class="far fa-info-circle"></i></a>
           </h4>
           <h4 class="chart-title text-capitalize mt-0 pt-0">
             <small>
@@ -55,6 +58,7 @@
 <script>
 import momentTimezone from 'moment-timezone';
 import { format } from 'date-fns';
+import VueJsonPretty from 'vue-json-pretty';
 
 export default {
   name: 'Alert',
@@ -126,6 +130,9 @@ export default {
         container_id: 'tradingview-' + this.currentAlert.id,
       });
     }, 100);
+  },
+  components: {
+    VueJsonPretty,
   },
 };
 </script>
