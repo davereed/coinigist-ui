@@ -42,6 +42,7 @@ import moment from 'moment';
 
 export default {
   name: 'home',
+  props: ['auth', 'authenticated'],
   data() {
     return {
       candleInterval: '5',
