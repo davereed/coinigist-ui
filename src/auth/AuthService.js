@@ -12,6 +12,7 @@ export default class AuthService {
     this.setSession = this.setSession.bind(this);
     this.logout = this.logout.bind(this);
     this.isAuthenticated = this.isAuthenticated.bind(this);
+    this.profile = this.getProfile();
   }
 
   auth0 = new auth0.WebAuth({
@@ -19,7 +20,7 @@ export default class AuthService {
     clientID: AUTH_CONFIG.clientId,
     redirectUri: AUTH_CONFIG.callbackUrl,
     responseType: 'token id_token',
-    scope: 'openid',
+    scope: 'openid profile user_metadata',
   });
 
   login() {
@@ -45,7 +46,13 @@ export default class AuthService {
     localStorage.setItem('access_token', authResult.accessToken);
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem('expires_at', expiresAt);
-    this.authNotifier.emit('authChange', { authenticated: true });
+
+    this.auth0.client.userInfo(authResult.accessToken, (err, profile) => {
+      if (profile) {
+        localStorage.setItem('profile', JSON.stringify(profile));
+        this.authNotifier.emit('authChange', { authenticated: true, profile });
+      }
+    });
   }
 
   logout() {
@@ -62,5 +69,12 @@ export default class AuthService {
   isAuthenticated() {
     const expiresAt = JSON.parse(localStorage.getItem('expires_at'));
     return new Date().getTime() < expiresAt;
+  }
+
+  getProfile() {
+    if (this.isAuthenticated()) {
+      return JSON.parse(localStorage.getItem('profile'));
+    }
+    return {};
   }
 }
