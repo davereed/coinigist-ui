@@ -46,6 +46,9 @@
             <small>Sellers</small>
           </h4>
           <div class="chart-sidebar-buttons p-3">
+            <div class="border-top border-dark my-2"></div>
+            <a target="_blank" v-on:click="trade" class="btn btn-success btn-sm btn-block">Autotrade Signal</a>
+            <div class="border-top border-dark my-2"></div>
             <a target="_blank" :href="alert.binanceUrl" class="btn btn-primary btn-sm btn-block">Binance</a>
             <a target="_blank" :href="alert.tradingViewUrl" class="btn btn-secondary btn-sm btn-block">TradingView</a>
           </div>
@@ -59,6 +62,7 @@
 import momentTimezone from 'moment-timezone';
 import { format } from 'date-fns';
 import VueJsonPretty from 'vue-json-pretty';
+import axios from 'axios';
 
 export default {
   name: 'Alert',
@@ -71,6 +75,23 @@ export default {
       currentAlert: this.alert,
       createDate: format(new Date(), 'YYYY-MM-DD HH:mm:ss'),
     };
+  },
+  methods: {
+    trade(evt) {
+      const requestBody = {
+        from_currency: this.currentAlert.pairing,
+        to_currency: this.currentAlert.coin,
+      }
+      axios.post('/api/commas/quick', requestBody)
+      .then((response) => {
+        console.log('Response: ', response.data);
+      })
+      .catch((e) => {
+        console.log('Error: ', e.response.data);
+      });
+
+      evt.preventDefault();
+    },
   },
   computed: {
     scoreProgressVariant() {

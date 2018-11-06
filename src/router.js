@@ -5,7 +5,7 @@ import Callback from './components/Callback.vue';
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   routes: [
     {
@@ -16,6 +16,9 @@ export default new Router({
     {
       path: '/profile',
       name: 'profile',
+      meta: {
+        showProgressBar: true,
+      },
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
@@ -32,3 +35,5 @@ export default new Router({
     },
   ],
 });
+
+export default router;

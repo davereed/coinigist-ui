@@ -48,6 +48,7 @@
 
 <script>
 import axios from 'axios';
+import { loadProgressBar } from 'axios-progress-bar';
 import AuthService from './auth/AuthService';
 
 const auth = new AuthService();
@@ -76,9 +77,13 @@ export default {
   },
   mounted() {
     axios.defaults.headers.common.Authorization = 'Bearer ' + localStorage.getItem('id_token');
+    loadProgressBar();
   },
 };
 </script>
 
 <style>
+  #nprogress .spinner {
+    display: none !important;
+  }
 </style>
