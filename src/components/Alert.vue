@@ -81,14 +81,15 @@ export default {
       const requestBody = {
         from_currency: this.currentAlert.pairing,
         to_currency: this.currentAlert.coin,
-      }
+      };
+
       axios.post('/api/commas/quick', requestBody)
-      .then((response) => {
-        console.log('Response: ', response.data);
-      })
-      .catch((e) => {
-        console.log('Error: ', e.response.data);
-      });
+        .then((response) => {
+          console.log('Response: ', response.data);
+        })
+        .catch((e) => {
+          console.log('Error: ', e.response.data);
+        });
 
       evt.preventDefault();
     },
