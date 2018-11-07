@@ -1,5 +1,11 @@
 <template>
   <div class="home">
+    <b-modal id="modal-profile-success" title="Success" :ok-only="true">
+      Your profile was successfully saved.
+    </b-modal>
+    <b-modal id="modal-profile-error" title="Error" :ok-only="true">
+      There was an error processing your request.
+    </b-modal>
     <main role="main" class="container">
       <div class="row">
         <div class="col-lg-8">
@@ -134,7 +140,10 @@ export default {
   methods: {
     onSubmit(evt) {
       this.showAPI = false;
-      axios.patch('/api/users', this.form).then(() => true).catch((e) => {
+      axios.patch('/api/users', this.form).then(() => {
+        this.$root.$emit('bv::show::modal', 'modal-profile-success');
+      }).catch((e) => {
+        this.$root.$emit('bv::show::modal', 'modal-profile-error');
         console.log('Error: ', e.response.data);
       });
 
