@@ -46,9 +46,11 @@
             <small>Sellers</small>
           </h4>
           <div class="chart-sidebar-buttons p-3">
-            <div class="border-top border-dark my-2"></div>
-            <a target="_blank" v-on:click="trade" class="btn btn-success btn-sm btn-block">Autotrade Signal</a>
-            <div class="border-top border-dark my-2"></div>
+            <div v-if="authenticated">
+              <div class="border-top border-dark my-2"></div>
+              <a target="_blank" v-on:click="trade" class="btn btn-success btn-sm btn-block">Autotrade Signal</a>
+              <div class="border-top border-dark my-2"></div>
+            </div>
             <a target="_blank" :href="alert.binanceUrl" class="btn btn-primary btn-sm btn-block">Binance</a>
             <a target="_blank" :href="alert.tradingViewUrl" class="btn btn-secondary btn-sm btn-block">TradingView</a>
           </div>
@@ -69,6 +71,7 @@ export default {
   props: {
     alert: Object,
     interval: String,
+    authenticated: Boolean,
   },
   data() {
     return {
@@ -81,7 +84,7 @@ export default {
       const requestBody = {
         from_currency: this.currentAlert.pairing,
         to_currency: this.currentAlert.coin,
-        note: 'Coinigist ID: ' + this.currentAlert.id,
+        note: 'Coinigist ID: ' + this.currentAlert.alertId,
       };
 
       axios.post('/api/commas/quick', requestBody)

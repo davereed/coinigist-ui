@@ -24,7 +24,7 @@
                 <b-button :pressed.sync="alertSounds" variant="outline-primary" size="sm"><span v-show="alertSounds"><i class="fas fa-fw fa-volume"></i></span><span v-show="!alertSounds"><i class="fas fa-fw fa-volume-off"></i></span></b-button>
               </small>
             </h3>
-            <Alert v-for="alert in alerts" v-bind:key=alert.id :alert=alert :interval=candleInterval />
+            <Alert v-for="alert in alerts" v-bind:key=alert.id :alert=alert :interval=candleInterval :authenticated="authenticated" />
             <div class=" mt-4" v-if="!alerts.length">
               <div class="">
                 <section class="jumbotron bg-dark text-white text-center py-4">
@@ -85,9 +85,9 @@ export default {
         const price = messageObject.latest_candle.price_close;
         const sellers = messageObject.sell_pressure === 'med' ? 'medium' : messageObject.sell_pressure;
         const market = messageObject.alt_mood;
-        const percentage = messageObject.pct_str;
         const support = messageObject.support_to_resist;
         const baseScore = messageObject.score;
+        const alertId = messageObject.id;
 
         // Create urls
         const binanceUrl = `https://www.binance.com/en/trade/${coin}_${pairing}`;
@@ -113,24 +113,7 @@ export default {
             tradingViewUrl,
             tradingViewChart,
             originalMessage: messageObject,
-          });
-        } else if (messageObject.msg_type === 'UPDATE') {
-          if (this.updateSounds) {
-            const audio = new Audio('https://soundbible.com/mp3/Tick-DeepFrozenApps-397275646.mp3');
-            audio.volume = 0.2;
-            audio.play();
-          }
-          this.updates.unshift({
-            id: this.updates.count,
-            date: formattedDate,
-            exchangeSymbol,
-            coin,
-            pairing,
-            percentage,
-            sellers,
-            market,
-            binanceUrl,
-            tradingViewUrl,
+            alertId,
           });
         }
       } catch (err) {
