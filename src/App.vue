@@ -16,7 +16,7 @@
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
 
-          <b-nav-item-dropdown right v-if="authenticated" :text="profile.name">
+          <b-nav-item-dropdown right v-if="authenticated" :text="profile.given_name">
             <b-dropdown-item><router-link to="/profile">Profile</router-link></b-dropdown-item>
             <b-dropdown-divider></b-dropdown-divider>
             <b-dropdown-item><a href="#" @click="logout()">Logout</a></b-dropdown-item>

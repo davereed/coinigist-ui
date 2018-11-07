@@ -81,14 +81,17 @@ export default {
       const requestBody = {
         from_currency: this.currentAlert.pairing,
         to_currency: this.currentAlert.coin,
+        note: 'Coinigist ID: ' + this.currentAlert.id,
       };
 
       axios.post('/api/commas/quick', requestBody)
         .then((response) => {
+          this.$root.$emit('bv::show::modal', 'modal-trade-success');
           console.log('Response: ', response.data);
         })
         .catch((e) => {
-          console.log('Error: ', e.response.data);
+          this.$root.$emit('bv::show::modal', 'modal-trade-error');
+          console.log('Error: ', e);
         });
 
       evt.preventDefault();

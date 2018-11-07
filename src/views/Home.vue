@@ -1,5 +1,11 @@
 <template>
   <div class="home pt-5">
+    <b-modal id="modal-trade-success" title="Trade successful" :ok-only="true">
+      Your trade request has been processed. Please check 3Commas to track your progress.
+    </b-modal>
+    <b-modal id="modal-trade-error" title="Trade error" :ok-only="true">
+      There was an error processing your trade request.
+    </b-modal>
     <main role="main" class="container-fluid">
       <div>
         <div class="row justify-content-center">
