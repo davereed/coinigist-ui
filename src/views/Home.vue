@@ -93,11 +93,6 @@ export default {
         const binanceUrl = `https://www.binance.com/en/trade/${coin}_${pairing}`;
         const tradingViewUrl = `https://www.tradingview.com/symbols/${coin}${pairing}`;
         if (messageObject.msg_type === 'ALERT' && messageObject.is_show === true) {
-          if (this.alertSounds) {
-            const audio = new Audio('https://soundbible.com/mp3/sms-alert-1-daniel_simon.mp3');
-            audio.volume = 0.2;
-            audio.play();
-          }
           this.alerts.unshift({
             id: this.alerts.length,
             date: formattedDate,
@@ -115,6 +110,19 @@ export default {
             originalMessage: messageObject,
             alertId,
           });
+        }
+      } catch (err) {
+        console.log(err);
+        console.log(msg);
+      }
+
+      try {
+        if (messageObject.msg_type === 'ALERT' && messageObject.is_show === true) {
+          if (this.alertSounds) {
+            const audio = new Audio('https://soundbible.com/mp3/sms-alert-1-daniel_simon.mp3');
+            audio.volume = 0.2;
+            audio.play();
+          }
         }
       } catch (err) {
         console.log(err);
