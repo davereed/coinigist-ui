@@ -68,10 +68,12 @@ export default {
   persist: ['updateSounds', 'alertSounds', 'candleInterval'],
   methods: {
     receptor(msg) {
+      let messageObject;
+
       try {
         // Get date and message
         const formattedDate = moment().format('MMMM Do YYYY, h:mm:ss a');
-        const messageObject = msg.message;
+        messageObject = msg.message;
 
         // Set coin info
         const coinRegex = /([a-zA-Z]{2,5})(btc|usdt|etc|bnb)/gmi;
